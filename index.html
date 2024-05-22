@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title> SPL-registration</title>
+   <!--FontAwesome  CDN link-->
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+   <!-- Bootstrap Css link-->
+   <link rel="stylesheet" href="./bootstrap-5.2.3-dist/css/bootstrap.min.css">
+</head>
+<body class="body" style="background-color:#673ab7;">
+   <div class="container text-center p-3 text-light">
+      <h1>SALEM PREMIER LEAGUE</h1>
+      <p>Let's register the team...</p>
+   </div>
+   <div class="container ">
+      <div class="row">
+         <div class="col">
+            <div class="card text-dark">
+               <div class="card-header text-center">
+                  REGISTRATION FORM
+               </div>
+               <div class="card-body">
+                  <form id="frm">
+                     <div class="form-group">
+                        <label for="teamName"> Team Name </label>
+                        <input class="form-control" type="text" name="teamName" id="teamName" placeholder="Enter the team name ">
+                     </div>
+                     <div class="form-group">
+                        <label for="owner"> Owner Name </label>
+                        <input class="form-control" type="text" name="owner" id="owner" placeholder="Enter the owner name ">
+                     </div>
+                     <div class="form-group">
+                        <label for="manager"> Manager Name </label>
+                        <input class="form-control" type="text" name="manager" id="manager" placeholder="Enter the manager name ">
+                     </div>
+                     <div class="form-group">
+                        <label for="email"> Email Address </label>
+                        <div class="input-group">
+                           <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa-regular fa-envelope"></i></span>
+                           </div> 
+                           <input class="form-control" type="email" name="email" id="email" placeholder="Enter the email address " required aria-describedby="email">
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <label for="phno"> Phone Number </label>
+                        <div class="input-group">
+                           <div class="input-group-prepend">
+                              <span class="input-group-text"> <i class="fa-solid fa-phone"></i></span>
+                           </div>
+                           <input class="form-control" type=" number" name="phno" id="phno" placeholder="Enter the phone Number " required aria-describedby="phno">
+
+                        </div>
+                     </div>
+                     <div class="form-group">
+                        <label class="form-control" for="address"> Address </label>
+                        <div class="input-group">
+                           <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
+                           </div>
+                           <textarea name="address" id="address" placeholder="Enter the Address "></textarea>
+
+                        </div>
+                     </div>
+                     <div class="text-center p-3">
+                        <input type="hidden" id="id" name = "id" value = "0">
+                        <button type="button" class="btn btn-dark" id="insert">INSERT TEAM</button>
+
+                     </div>
+                  </form>
+               </div>
+            </div>
+         </div>
+         <div class="col" id="output">
+     
+         </div>
+      </div>
+
+   </div>
+   <script src="https://kit.fontawesome.com/7c2426f918.js" crossorigin="anonymous"></script>
+  <!--Bootstrap js & jquery link-->
+   <script src="./bootstrap-5.2.3-dist/js/jquery.min.js"></script>
+   <script src="./bootstrap-5.2.3-dist/js/bootstrap.min.js"></script>
+   <script>
+      $(document).ready(function(){
+         $("#output").load("view.php");
+         $("#insert").click(function(){
+            var id = $("#id").val();
+            if(id == 0){
+               $.ajax({
+               url:"insert.php",
+               type:"post",
+               data:$("#frm").serialize(),
+               success:function(responce){
+                  $("<tr></tr>").html(responce).appendTo(".tableAppends");
+                  $("#frm")[0].reset();
+                  $("#id").val("0");
+               }
+            });  
+            }
+            else{
+               $.ajax({
+               url:"update.php",
+               type:"post",
+               data:$("#frm").serialize(),
+               success:function(responce){
+                  $("#output").load("view.php");
+                  $("#frm")[0].reset();
+                  $("#id").val("0");
+               }
+            });  
+            }
+         });
+         //Delete
+         $(document).on("click",".del",function(){
+               var del =  $(this);
+               var id = $(this).attr("data-id");
+               $.ajax({
+               url:"delete.php",
+               type:"post",
+               data:{id:id},
+               success:function(){
+                  del.closest("tr").hide();
+               }
+            });  
+         });
+         //Update
+         $(document).on("click",".update",function(){
+               var row =  $(this);
+               var id = $(this).attr("data-id");
+               $("#id").val(id);
+               var teamName = row.closest("tr").find("td:eq(0)").text();
+               $("#teamName").val(teamName);
+               var owner = row.closest("tr").find("td:eq(1)").text();
+               $("#owner").val(owner);
+               var manager = row.closest("tr").find("td:eq(2)").text();
+               $("#manager").val(manager);
+               var email = row.closest("tr").find("td:eq(3)").text();
+               $("#email").val(email);
+               var phno = row.closest("tr").find("td:eq(4)").text();
+               $("#phno").val(phno);
+               var address = row.closest("tr").find("td:eq(5)").text();
+               $("#address").val(address);
+             
+         });
+      });
+   </script>
+</body>
+</html>
